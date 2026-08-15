@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#071412">
+<title>AgenticArb v2 Elite — Interactive Desk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#071412; --pane:#0d1f1c; --pane2:#102622; --line:#1c3833;
+  --mint:#4fe3c1; --mint-dim:#2a8f7c; --rose:#ff6b81; --amber:#f5b856;
+  --paper:#e9f5f1; --fog:#9fb8b2; --mute:#5f7a74;
+  --display:'Chakra Petch',system-ui,sans-serif;
+  --body:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --nav-h:64px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--ink);color:var(--paper);font-family:var(--body);font-size:16px;line-height:1.55;min-height:100dvh;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom,0px))}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+:focus-visible{outline:2px solid var(--mint);outline-offset:2px;border-radius:4px}
+a{color:var(--mint)}
+
+/* ---------- header + tape ---------- */
+header{position:sticky;top:0;z-index:40;background:linear-gradient(180deg,var(--ink) 82%,rgba(7,20,18,0));padding-top:env(safe-area-inset-top,0px)}
+.brandbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 8px}
+.wordmark{font-family:var(--display);font-weight:700;font-size:17px;letter-spacing:.06em}
+.wordmark small{color:var(--mint);font-weight:600;margin-left:6px;font-size:11px;letter-spacing:.12em}
+.badge{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;padding:4px 9px;border:1px solid var(--line);border-radius:99px;color:var(--fog);display:flex;align-items:center;gap:6px}
+.badge .dot{width:7px;height:7px;border-radius:50%;background:var(--amber)}
+.badge.live .dot{background:var(--mint);box-shadow:0 0 8px var(--mint)}
+.badge.live{color:var(--mint);border-color:var(--mint-dim)}
+.tape{overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--pane)}
+.tape-track{display:flex;width:max-content;animation:tape 38s linear infinite;padding:7px 0}
+@keyframes tape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.tick{font-family:var(--mono);font-size:12px;padding:0 18px;white-space:nowrap;color:var(--fog)}
+.tick b{color:var(--paper);font-weight:600}
+.tick .up{color:var(--mint)} .tick .dn{color:var(--rose)}
+
+/* ---------- layout ---------- */
+main{max-width:680px;margin:0 auto;padding:18px 16px 32px}
+.view{display:none;animation:fadein .25s ease}
+.view.on{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+h1{font-family:var(--display);font-size:clamp(26px,7.5vw,38px);line-height:1.12;font-weight:700;letter-spacing:.01em}
+h1 .hl{color:var(--mint)}
+h2{font-family:var(--display);font-size:19px;font-weight:600;letter-spacing:.03em;margin:26px 0 10px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.22em;color:var(--mint);text-transform:uppercase;margin-bottom:10px}
+p.lede{color:var(--fog);margin-top:12px;font-size:16.5px}
+.card{background:var(--pane);border:1px solid var(--line);border-radius:14px;padding:16px;margin-top:14px}
+.card h3{font-family:var(--display);font-size:15px;font-weight:600;letter-spacing:.04em}
+.quiet{color:var(--fog);font-size:14.5px}
+.mono{font-family:var(--mono)}
+.statrow{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:18px}
+.stat{background:var(--pane);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.stat b{font-family:var(--mono);font-size:18px;color:var(--mint);display:block}
+.stat span{font-size:12px;color:var(--fog);letter-spacing:.04em}
+ul.gaps{list-style:none;margin-top:6px}
+ul.gaps li{padding:9px 0 9px 26px;position:relative;color:var(--fog);font-size:15px;border-bottom:1px dashed var(--line)}
+ul.gaps li:last-child{border-bottom:none}
+ul.gaps li::before{content:"\25C6";position:absolute;left:2px;color:var(--mint);font-size:11px;top:12px}
+blockquote{border-left:3px solid var(--mint);padding:4px 0 4px 14px;margin-top:14px;color:var(--fog);font-size:15px}
+
+/* ---------- pipeline ---------- */
+.deskhead{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.runbtn{background:var(--mint);color:#04211b;font-family:var(--display);font-weight:700;letter-spacing:.06em;font-size:15px;padding:13px 22px;border-radius:12px;min-height:48px;transition:transform .12s ease,opacity .2s}
+.runbtn:active{transform:scale(.97)}
+.runbtn[disabled]{opacity:.45}
+.ghostbtn{border:1px solid var(--line);border-radius:12px;padding:12px 16px;font-family:var(--mono);font-size:13px;color:var(--fog);min-height:48px}
+.ghostbtn.on{border-color:var(--mint-dim);color:var(--mint)}
+.scan-table{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px;margin-top:8px}
+.scan-table th{text-align:left;color:var(--mute);font-weight:500;font-size:10.5px;letter-spacing:.14em;padding:6px 4px;border-bottom:1px solid var(--line)}
+.scan-table td{padding:9px 4px;border-bottom:1px solid var(--line);color:var(--fog)}
+.scan-table tr.best td{color:var(--paper);background:rgba(79,227,193,.06)}
+.scan-table td.apr{color:var(--mint);text-align:right}
+.scan-table td:last-child,.scan-table th:last-child{text-align:right}
+.steps{margin-top:16px;display:flex;flex-direction:column;gap:10px}
+.step{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--pane2);opacity:.45;transition:opacity .3s,border-color .3s}
+.step.active{opacity:1;border-color:var(--mint-dim)}
+.step.done{opacity:1}
+.step-top{display:flex;align-items:center;gap:10px}
+.step-num{font-family:var(--mono);font-size:11px;color:var(--mint);letter-spacing:.1em;min-width:60px}
+.step-name{font-family:var(--display);font-size:14px;font-weight:600;letter-spacing:.04em;flex:1}
+.step-state{font-family:var(--mono);font-size:11px;color:var(--mute)}
+.step-state.ok{color:var(--mint)} .step-state.bad{color:var(--rose)} .step-state.run{color:var(--amber)}
+.step-body{font-family:var(--mono);font-size:12px;color:var(--fog);margin-top:8px;display:none;line-height:1.7}
+.step.active .step-body,.step.done .step-body{display:block}
+.gate{display:flex;justify-content:space-between;gap:8px;padding:3px 0}
+.gate .res.ok{color:var(--mint)} .gate .res.bad{color:var(--rose)}
+.legs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.leg{border:1px solid var(--line);border-radius:9px;padding:9px;position:relative;overflow:hidden}
+.leg .fillbar{position:absolute;inset:0;width:0%;background:rgba(79,227,193,.12);transition:width .9s ease}
+.leg.short .fillbar{background:rgba(255,107,129,.12)}
+.leg span{position:relative;font-size:11px}
+.leg b{position:relative;display:block;font-size:12px;margin-top:3px}
+.leg.long b{color:var(--mint)} .leg.short b{color:var(--rose)}
+.sliders{margin-top:10px;display:flex;flex-direction:column;gap:14px}
+.sl label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:12px;color:var(--fog);margin-bottom:6px}
+.sl output{color:var(--mint)}
+input[type=range]{width:100%;accent-color:var(--mint);height:28px}
+.ledger-row{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);font-size:12.5px;padding:10px 0;border-bottom:1px solid var(--line);gap:8px}
+.ledger-row:last-child{border-bottom:none}
+.pnl.pos{color:var(--mint)} .pnl.neg{color:var(--rose)}
+#equity-line{width:100%;height:56px;margin-top:10px}
+.simnote{font-size:12px;color:var(--mute);margin-top:12px;font-family:var(--mono);line-height:1.6}
+
+/* ---------- modules ---------- */
+.mod{border:1px solid var(--line);border-radius:12px;background:var(--pane);margin-top:10px;overflow:hidden}
+.mod-btn{width:100%;display:flex;align-items:center;gap:12px;padding:14px;text-align:left;min-height:52px}
+.mod-btn .st{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;color:var(--mint);border:1px solid var(--mint-dim);border-radius:99px;padding:2px 8px;flex-shrink:0}
+.mod-btn .nm{font-family:var(--display);font-size:14px;font-weight:600;flex:1;letter-spacing:.02em}
+.mod-btn .chev{color:var(--mute);transition:transform .2s;font-size:12px}
+.mod.open .chev{transform:rotate(90deg)}
+.mod-body{display:none;padding:0 14px 14px;color:var(--fog);font-size:14px}
+.mod.open .mod-body{display:block}
+.mod-body code{font-family:var(--mono);font-size:12px;color:var(--mint);background:var(--ink);border:1px solid var(--line);border-radius:6px;padding:2px 7px;display:inline-block;margin-top:8px;word-break:break-all}
+
+/* ---------- console ---------- */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{font-family:var(--mono);font-size:12.5px;border:1px solid var(--line);border-radius:99px;padding:10px 15px;color:var(--fog);min-height:44px}
+.chip.on,.chip:active{border-color:var(--mint-dim);color:var(--mint)}
+.term{background:#04100d;border:1px solid var(--line);border-radius:12px;margin-top:14px;padding:14px;font-family:var(--mono);font-size:12px;line-height:1.8;min-height:280px;max-height:420px;overflow-y:auto;white-space:pre-wrap;word-break:break-word;color:var(--fog)}
+.term .g{color:var(--mint)} .term .y{color:var(--amber)} .term .r{color:var(--rose)} .term .w{color:var(--paper)}
+.cursor{display:inline-block;width:7px;height:14px;background:var(--mint);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* ---------- deploy ---------- */
+.codeblock{position:relative;background:#04100d;border:1px solid var(--line);border-radius:12px;margin-top:12px}
+.codeblock pre{padding:14px;padding-top:38px;font-family:var(--mono);font-size:12.5px;line-height:1.8;overflow-x:auto;color:var(--fog)}
+.codeblock pre .c{color:var(--mute)}
+.copybtn{position:absolute;top:8px;right:8px;font-family:var(--mono);font-size:11px;color:var(--mint);border:1px solid var(--mint-dim);border-radius:8px;padding:6px 12px;min-height:32px;background:var(--ink)}
+.tree{font-family:var(--mono);font-size:12.5px;margin-top:10px}
+.tree-item{padding:8px 6px;border-bottom:1px solid var(--line);color:var(--fog)}
+.tree-item:last-child{border-bottom:none}
+.tree-item .cm{color:var(--mute);font-size:11px;display:block;padding-left:20px;margin-top:2px}
+.tree-item b{color:var(--paper);font-weight:500}
+.tree-item .dir{color:var(--mint)}
+.warn{border:1px solid rgba(245,184,86,.4);background:rgba(245,184,86,.06);border-radius:12px;padding:14px;margin-top:14px;font-size:14px;color:var(--fog)}
+.warn b{color:var(--amber);font-family:var(--display);letter-spacing:.04em;font-size:13px;display:block;margin-bottom:6px}
+
+/* ---------- bottom nav ---------- */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(10,26,23,.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav-inner{max-width:680px;margin:0 auto;display:flex}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 2px 8px;min-height:var(--nav-h);color:var(--mute);font-family:var(--mono);font-size:10px;letter-spacing:.06em}
+.nav-btn svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn.on{color:var(--mint)}
+footer{max-width:680px;margin:0 auto;padding:8px 16px 28px;color:var(--mute);font-size:12px;font-family:var(--mono);line-height:1.7}
+
+@media (prefers-reduced-motion:reduce){
+  .tape-track{animation:none;flex-wrap:wrap;width:100%}
+  .view{animation:none}
+  .cursor{animation:none}
+}
+@media (min-width:560px){.statrow{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brandbar">
+    <div class="wordmark">AGENTICARB<small>v2 ELITE</small></div>
+    <div class="badge" id="feed-badge"><span class="dot"></span><span id="feed-label">CONNECTING…</span></div>
+  </div>
+  <div class="tape" aria-label="Perpetual funding rates"><div class="tape-track" id="tape"></div></div>
+</header>
+
+<main>
+
+<!-- ================= OVERVIEW ================= -->
+<section class="view on" id="view-overview">
+  <div class="eyebrow">Open-source · MIT · Hyperliquid</div>
+  <h1>An autonomous, <span class="hl">risk-first</span> operating system for funding-rate carry.</h1>
+  <p class="lede">AgenticArb harvests perpetual funding on Hyperliquid RWA & crypto markets — with the guardrails naive funding bots skip: calibrated quant models, capacity awareness, atomic dual-leg execution, and formal risk gates on every cycle.</p>
+
+  <div class="statrow">
+    <div class="stat"><b>&ge;95%</b><span>cycles fully deterministic</span></div>
+    <div class="stat"><b>5-min</b><span>quick start to verify</span></div>
+    <div class="stat"><b>Dual-leg</b><span>atomic execution</span></div>
+    <div class="stat"><b>MIT</b><span>license, Python 3.10+</span></div>
+  </div>
+
+  <h2>Why it isn't a simple funding bot</h2>
+  <ul class="gaps">
+    <li>Regime-aware funding persistence predictor — will the carry actually stick around?</li>
+    <li>Asset-specific empirical gap distributions instead of one-size-fits-all assumptions.</li>
+    <li>L2 order-book impact + dynamic capacity model — knows when a trade is too big for the book.</li>
+    <li>ADL rank heuristic to avoid being first in line for auto-deleveraging.</li>
+    <li>Formal risk gates as pure functions — every trade must pass, every time.</li>
+    <li>Continuous adversarial self-play: the system red-teams itself before markets do.</li>
+    <li>Hybrid cognition: LangGraph agents wake only on anomalies or meta-review — the critical path stays deterministic.</li>
+  </ul>
+
+  <h2>The design contract</h2>
+  <blockquote>Hand this monorepo to a senior engineer who has never seen the project, and they must be able to deploy it, exercise every major feature, and verify it end-to-end — with zero additional context.</blockquote>
+
+  <div class="card">
+    <h3>SEE IT MOVE →</h3>
+    <p class="quiet" style="margin-top:6px">The <b>Pipeline</b> tab runs the system's decision cycle right here on your phone: scan → quant → risk gates → dual-leg fill.</p>
+    <button class="runbtn" style="margin-top:12px;width:100%" onclick="go('pipeline')">Open the desk</button>
+  </div>
+</section>
+
+<!-- ================= PIPELINE ================= -->
+<section class="view" id="view-pipeline">
+  <div class="eyebrow">Signature demo</div>
+  <div class="deskhead">
+    <h1 style="font-size:clamp(22px,6vw,30px)">One decision <span class="hl">cycle</span>.</h1>
+  </div>
+  <p class="lede" style="font-size:15px">This mirrors AgenticArb's hybrid loop with illustrative math. The real models live in <span class="mono" style="color:var(--mint)">src/agenticarb/quant/</span>.</p>
+
+  <div class="card">
+    <h3 id="scan-title">MARKET SCAN</h3>
+    <table class="scan-table" aria-label="Funding scan">
+      <thead><tr><th>ASSET</th><th>1H FUNDING</th><th>OI</th><th>APR</th></tr></thead>
+      <tbody id="scan-body"></tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <h3>RISK APPETITE</h3>
+    <div class="sliders">
+      <div class="sl">
+        <label>Position size <output id="o-size">$50k</output></label>
+        <input type="range" id="in-size" min="10000" max="500000" step="10000" value="50000" aria-label="Position size">
+      </div>
+      <div class="sl">
+        <label>Max leverage <output id="o-lev">3.0×</output></label>
+        <input type="range" id="in-lev" min="1" max="10" step="0.5" value="3" aria-label="Max leverage">
+      </div>
+      <div class="sl">
+        <label>Min net APR <output id="o-apr">6%</output></label>
+        <input type="range" id="in-apr" min="0" max="30" step="1" value="6" aria-label="Minimum net APR">
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:10px;margin-top:16px">
+    <button class="runbtn" id="btn-run" style="flex:1">RUN CYCLE</button>
+    <button class="ghostbtn" id="btn-auto" aria-pressed="false">AUTO ⟳</button>
+  </div>
+
+  <div class="steps" id="steps">
+    <div class="step" id="st-scan">
+      <div class="step-top"><span class="step-num">CYCLE·1</span><span class="step-name">Scan</span><span class="step-state">idle</span></div>
+      <div class="step-body"></div>
+    </div>
+    <div class="step" id="st-quant">
+      <div class="step-top"><span class="step-num">CYCLE·2</span><span class="step-name">Quant models</span><span class="step-state">idle</span></div>
+      <div class="step-body"></div>
+    </div>
+    <div class="step" id="st-gates">
+      <div class="step-top"><span class="step-num">CYCLE·3</span><span class="step-name">Risk gates</span><span class="step-state">idle</span></div>
+      <div class="step-body"></div>
+    </div>
+    <div class="step" id="st-exec">
+      <div class="step-top"><span class="step-num">CYCLE·4</span><span class="step-name">Atomic dual-leg</span><span class="step-state">idle</span></div>
+      <div class="step-body">
+        <div class="legs">
+          <div class="leg short"><div class="fillbar" id="fill-short"></div><span>LEG A · SHORT PERP</span><b id="leg-short">—</b></div>
+          <div class="leg long"><div class="fillbar" id="fill-long"></div><span>LEG B · LONG HEDGE</span><b id="leg-long">—</b></div>
+        </div>
+        <div id="exec-note" style="margin-top:8px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>POSITION LEDGER <span class="mono" style="color:var(--mute);font-size:10px">· paper equity $100,000</span></h3>
+    <div id="ledger"><p class="quiet mono" style="font-size:12px;padding:8px 0">No open positions. Run a cycle.</p></div>
+    <svg id="equity-line" viewBox="0 0 300 56" preserveAspectRatio="none" aria-label="Equity curve">
+      <polyline id="eq-poly" points="" fill="none" stroke="#4fe3c1" stroke-width="1.5"/>
+    </svg>
+  </div>
+
+  <p class="simnote">Funding accrues each tick while AUTO is on. Fees, slippage and capacity here are simplified stand-ins for the repo's impact/capacity and gap-distribution models. Nothing on this page places real orders.</p>
+</section>
+
+<!-- ================= MODULES ================= -->
+<section class="view" id="view-modules">
+  <div class="eyebrow">Architecture</div>
+  <h1 style="font-size:clamp(22px,6vw,30px)">Deterministic core, <span class="hl">agentic</span> edge.</h1>
+  <p class="lede" style="font-size:15px">The critical path is pure functions and calibrated models. LangGraph agents are gated behind anomaly scores and meta-review schedules — cognition on demand, not on every tick.</p>
+  <div id="mods"></div>
+</section>
+
+<!-- ================= CONSOLE ================= -->
+<section class="view" id="view-console">
+  <div class="eyebrow">CLI walkthrough</div>
+  <h1 style="font-size:clamp(22px,6vw,30px)">Every feature, <span class="hl">one CLI</span>.</h1>
+  <p class="lede" style="font-size:15px">Tap a command to preview what <span class="mono" style="color:var(--mint)">python -m agenticarb.cli</span> does. Output below is a scripted re-enactment, not a live shell.</p>
+  <div class="chips" id="chips"></div>
+  <div class="term" id="term" aria-live="polite"><span class="g">agenticarb</span> <span class="w">$</span> <span class="cursor"></span></div>
+</section>
+
+<!-- ================= DEPLOY ================= -->
+<section class="view" id="view-deploy">
+  <div class="eyebrow">Ship it</div>
+  <h1 style="font-size:clamp(22px,6vw,30px)">From clone to <span class="hl">verified</span> in 5 minutes.</h1>
+
+  <h2>Quick start</h2>
+  <div class="codeblock">
+    <button class="copybtn" data-copy="git clone https://github.com/ANAMIZED/agenticarb.git && cd agenticarb\npython -m venv .venv && source .venv/bin/activate\npip install -e \".[dev]\"\npython -m agenticarb.cli verify">COPY</button>
+    <pre>git clone https://github.com/ANAMIZED/agenticarb.git
+cd agenticarb
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+
+<span class="c"># full system verification — must exit 0</span>
+python -m agenticarb.cli verify</pre>
+  </div>
+
+  <h2>Docker alternative</h2>
+  <div class="codeblock">
+    <button class="copybtn" data-copy="docker compose build\ndocker compose run --rm agenticarb">COPY</button>
+    <pre><span class="c"># no local Python deps needed</span>
+docker compose build
+docker compose run --rm agenticarb</pre>
+  </div>
+
+  <h2>Project layout</h2>
+  <div class="card" style="padding:8px 14px">
+    <div class="tree">
+      <div class="tree-item"><b class="dir">src/agenticarb/quant/</b><span class="cm">persistence · gaps · impact/capacity · ADL · risk gates</span></div>
+      <div class="tree-item"><b class="dir">src/agenticarb/agents/</b><span class="cm">graph.py — LangGraph multi-agent cognitive layer</span></div>
+      <div class="tree-item"><b class="dir">src/agenticarb/execution/</b><span class="cm">dual-leg executor + Hyperliquid client</span></div>
+      <div class="tree-item"><b class="dir">src/agenticarb/simulation/</b><span class="cm">high-fidelity engine + adversarial episodes</span></div>
+      <div class="tree-item"><b class="dir">src/agenticarb/security/</b><span class="cm">agent wallet + audit log</span></div>
+      <div class="tree-item"><b class="dir">tests/</b><span class="cm">unit + end-to-end</span></div>
+      <div class="tree-item"><b class="dir">configs/</b><span class="cm">default.yaml — risk limits, thresholds, SLA, session keys</span></div>
+      <div class="tree-item"><b class="dir">rust/</b><span class="cm">future critical path</span></div>
+      <div class="tree-item"><b>Dockerfile · docker-compose.yml · Makefile</b><span class="cm">one-command build & verify</span></div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <b>⚠ LIVE TRADING NOTES</b>
+    Paper/sim is the safe default. Going live requires the Hyperliquid Python SDK, a non-custodial agent wallet with <b style="color:var(--paper)">no withdrawal rights</b>, session keys enforced by AgentWalletGuard, and an explicit <span class="mono">MODE=live</span>. Never grant withdrawal rights to agent wallets.
+  </div>
+
+  <div class="card">
+    <h3>SOURCE</h3>
+    <p class="quiet" style="margin-top:6px">Full monorepo, docs and tests:</p>
+    <a class="mono" style="font-size:13px;word-break:break-all" href="https://github.com/ANAMIZED/agenticarb" target="_blank" rel="noopener">github.com/ANAMIZED/agenticarb ↗</a>
+  </div>
+</section>
+
+</main>
+
+<footer>Interactive brief built from the public README · MIT · Not investment advice; demo math is illustrative and places no orders.</footer>
+
+<nav aria-label="Sections">
+  <div class="nav-inner">
+    <button class="nav-btn on" data-v="overview" aria-label="Overview">
+      <svg viewBox="0 0 24 24"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>OVERVIEW</button>
+    <button class="nav-btn" data-v="pipeline" aria-label="Pipeline">
+      <svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-9"/><path d="M14 7h6v6"/></svg>PIPELINE</button>
+    <button class="nav-btn" data-v="modules" aria-label="Modules">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>MODULES</button>
+    <button class="nav-btn" data-v="console" aria-label="Console">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 9l4 3-4 3"/><path d="M12 15h6"/></svg>CONSOLE</button>
+    <button class="nav-btn" data-v="deploy" aria-label="Deploy">
+      <svg viewBox="0 0 24 24"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/><path d="M5 21h14"/></svg>DEPLOY</button>
+  </div>
+</nav>
+
+<script>
+"use strict";
+/* ============ state ============ */
+const S = {
+  live:false,
+  assets:[
+    {sym:"BTC",  f:0.0000125, oi:1.9e9},
+    {sym:"ETH",  f:0.0000110, oi:9.5e8},
+    {sym:"SOL",  f:0.0000210, oi:4.2e8},
+    {sym:"HYPE", f:0.0000480, oi:2.6e8},
+    {sym:"XRP",  f:0.0000090, oi:1.5e8},
+    {sym:"DOGE", f:0.0000175, oi:1.1e8}
+  ],
+  equity:100000, positions:[], eq:[100000],
+  running:false, auto:false, autoTimer:null
+};
+const $=id=>document.getElementById(id);
+const fmt$=n=>"$"+(n>=1e9?(n/1e9).toFixed(1)+"B":n>=1e6?(n/1e6).toFixed(0)+"M":n>=1e3?(n/1e3).toFixed(0)+"k":n.toFixed(0));
+const pct=(n,d=4)=>(n*100).toFixed(d)+"%";
+const apr=f=>f*24*365;
+
+/* ============ navigation ============ */
+function go(v){
+  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="view-"+v));
+  document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  window.scrollTo({top:0});
+}
+document.querySelectorAll(".nav-btn").forEach(b=>b.addEventListener("click",()=>go(b.dataset.v)));
+
+/* ============ data feed: live Hyperliquid → sim fallback ============ */
+function setBadge(live){
+  S.live=live;
+  const b=$("feed-badge");
+  b.classList.toggle("live",live);
+  $("feed-label").textContent = live? "LIVE · HYPERLIQUID" : "SIM DATA";
+  $("scan-title").textContent = "MARKET SCAN · " + (live?"LIVE FUNDING":"SIMULATED FUNDING");
+}
+async function tryLive(){
+  try{
+    const ctrl=new AbortController(); const t=setTimeout(()=>ctrl.abort(),4000);
+    const r=await fetch("https://api.hyperliquid.xyz/info",{method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({type:"metaAndAssetCtxs"}),signal:ctrl.signal});
+    clearTimeout(t);
+    if(!r.ok) throw 0;
+    const [meta,ctxs]=await r.json();
+    const want=new Set(S.assets.map(a=>a.sym));
+    const found=[];
+    meta.universe.forEach((u,i)=>{
+      if(want.has(u.name)&&ctxs[i]){
+        const c=ctxs[i];
+        found.push({sym:u.name,f:parseFloat(c.funding)||0,
+          oi:(parseFloat(c.openInterest)||0)*(parseFloat(c.markPx)||0)});
+      }
+    });
+    if(found.length>=3){ S.assets=found; setBadge(true); }
+    else throw 0;
+  }catch(e){ setBadge(false); }
+  renderTape(); renderScan();
+}
+function simTick(){
+  if(!S.live){
+    S.assets.forEach(a=>{ a.f=Math.max(-0.0002,Math.min(0.00025,a.f+(Math.random()-0.48)*0.000004)); });
+    renderTape(); renderScan();
+  }
+}
+
+/* ============ tape + scan ============ */
+function tapeHTML(){
+  return S.assets.map(a=>{
+    const A=apr(a.f), cls=A>=0?"up":"dn", arrow=A>=0?"\u25B2":"\u25BC";
+    return `<span class="tick"><b>${a.sym}-PERP</b> ${pct(a.f)}\u00b71h <span class="${cls}">${arrow} ${(A*100).toFixed(1)}% APR</span></span>`;
+  }).join("");
+}
+function renderTape(){ const h=tapeHTML(); $("tape").innerHTML=h+h; }
+function best(){ return S.assets.reduce((m,a)=>apr(a.f)>apr(m.f)?a:m,S.assets[0]); }
+function renderScan(){
+  const b=best();
+  $("scan-body").innerHTML=S.assets.map(a=>
+    `<tr class="${a.sym===b.sym?"best":""}"><td>${a.sym}</td><td>${pct(a.f)}</td><td>${fmt$(a.oi)}</td><td class="apr">${(apr(a.f)*100).toFixed(1)}%</td></tr>`).join("");
+}
+
+/* ============ sliders ============ */
+const bindSl=(inp,out,f)=>{$(inp).addEventListener("input",e=>$(out).textContent=f(e.target.value));};
+bindSl("in-size","o-size",v=>"$"+(v/1000)+"k");
+bindSl("in-lev","o-lev",v=>(+v).toFixed(1)+"\u00d7");
+bindSl("in-apr","o-apr",v=>v+"%");
+
+/* ============ cycle runner ============ */
+const RM = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const wait=ms=>new Promise(r=>setTimeout(r,RM?40:ms));
+function stepEl(id){ const el=$(id); return {el,body:el.querySelector(".step-body"),state:el.querySelector(".step-state")};}
+function setStep(s,mode,label){ s.el.classList.remove("active","done");
+  if(mode) s.el.classList.add(mode);
+  s.state.className="step-state "+(label==="PASS"||label==="FILLED"||label==="OK"?"ok":label==="ABORT"||label==="FAIL"?"bad":label==="RUNNING"?"run":"");
+  s.state.textContent=label;}
+function resetSteps(){["st-scan","st-quant","st-gates","st-exec"].forEach(id=>{const s=stepEl(id);s.el.classList.remove("active","done");s.state.className="step-state";s.state.textContent="idle";s.body.querySelectorAll(".dyn").forEach(n=>n.remove());});
+  $("fill-short").style.width="0%";$("fill-long").style.width="0%";$("leg-short").textContent="\u2014";$("leg-long").textContent="\u2014";$("exec-note").innerHTML="";}
+function line(s,html){const d=document.createElement("div");d.className="dyn";d.innerHTML=html;s.body.appendChild(d);}
+
+async function runCycle(){
+  if(S.running) return;
+  S.running=true; $("btn-run").disabled=true; resetSteps();
+  const size=+$("in-size").value, maxLev=+$("in-lev").value, minAPR=+$("in-apr").value/100;
+  const b=best(), grossAPR=apr(b.f);
+
+  // 1 \u00b7 scan
+  const s1=stepEl("st-scan"); setStep(s1,"active","RUNNING");
+  await wait(500);
+  line(s1,`${S.assets.length} perps scanned \u00b7 candidate <span style="color:var(--paper)">${b.sym}-PERP</span> @ <span style="color:var(--mint)">${(grossAPR*100).toFixed(1)}% APR</span> gross carry`);
+  setStep(s1,"done","OK"); await wait(350);
+
+  // 2 \u00b7 quant
+  const s2=stepEl("st-quant"); setStep(s2,"active","RUNNING"); await wait(650);
+  const persist=Math.min(.96,.55+grossAPR*2.2+Math.random()*.12);
+  const impact=Math.min(.02,(size/b.oi)*8);
+  const adl=Math.min(.95,Math.max(.05,grossAPR*2.4+Math.random()*.18));
+  const costAPR=(0.0007+impact)*52;
+  const netAPR=grossAPR*persist-costAPR;
+  line(s2,`funding_persistence(regime-aware) \u2192 <span style="color:var(--mint)">${(persist*100).toFixed(0)}%</span> hold-prob`);
+  line(s2,`impact_capacity(L2) \u2192 est. impact <span style="color:var(--amber)">${(impact*100).toFixed(3)}%</span> on ${fmt$(size)}`);
+  line(s2,`adl_estimator \u2192 queue-risk score ${(adl).toFixed(2)}`);
+  line(s2,`net expected carry \u2192 <span style="color:${netAPR>0?"var(--mint)":"var(--rose)"}">${(netAPR*100).toFixed(1)}% APR</span> after costs`);
+  setStep(s2,"done","OK"); await wait(350);
+
+  // 3 \u00b7 gates
+  const s3=stepEl("st-gates"); setStep(s3,"active","RUNNING"); await wait(400);
+  const lev=size/S.equity, cap=b.oi*0.02;
+  const gates=[
+    ["G1 \u00b7 leverage \u2264 "+maxLev.toFixed(1)+"\u00d7", lev<=maxLev, lev.toFixed(2)+"\u00d7"],
+    ["G2 \u00b7 net APR \u2265 "+(minAPR*100).toFixed(0)+"%", netAPR>=minAPR, (netAPR*100).toFixed(1)+"%"],
+    ["G3 \u00b7 size \u2264 2% of OI ("+fmt$(cap)+")", size<=cap, fmt$(size)],
+    ["G4 \u00b7 ADL queue-risk < 0.80", adl<0.80, adl.toFixed(2)],
+    ["G5 \u00b7 kill-switch clear", S.equity>95000, fmt$(S.equity)]
+  ];
+  let blocked=null;
+  for(const [name,ok,val] of gates){
+    await wait(320);
+    line(s3,`<div class="gate"><span>${name}</span><span class="res ${ok?"ok":"bad"}">${ok?"PASS":"FAIL"} \u00b7 ${val}</span></div>`);
+    if(!ok&&!blocked) blocked=name;
+  }
+  if(blocked){
+    setStep(s3,"done","ABORT");
+    const s4=stepEl("st-exec"); setStep(s4,"done","SKIPPED");
+    $("exec-note").innerHTML=`<span style="color:var(--rose)">cycle aborted by ${blocked.split(" \u00b7")[0]}</span> \u2014 risk gates are pure functions; no override path exists. Adjust appetite and re-run.`;
+    finishCycle(); return;
+  }
+  setStep(s3,"done","PASS"); await wait(350);
+
+  // 4 \u00b7 execute
+  const s4=stepEl("st-exec"); setStep(s4,"active","RUNNING");
+  $("leg-short").textContent=`SELL ${b.sym}-PERP \u00b7 ${fmt$(size)}`;
+  $("leg-long").textContent=`BUY ${b.sym} hedge \u00b7 ${fmt$(size)}`;
+  await wait(150); $("fill-short").style.width="100%"; $("fill-long").style.width="100%";
+  await wait(RM?60:950);
+  $("exec-note").innerHTML=`<span style="color:var(--mint)">both legs filled atomically</span> \u00b7 delta-neutral, collecting funding \u00b7 logged to audit trail`;
+  setStep(s4,"done","FILLED");
+  S.positions.push({sym:b.sym,size,f:b.f,pnl:0});
+  renderLedger(); finishCycle();
+}
+function finishCycle(){ S.running=false; $("btn-run").disabled=false; }
+$("btn-run").addEventListener("click",runCycle);
+
+/* ============ ledger ============ */
+function renderLedger(){
+  const L=$("ledger");
+  if(!S.positions.length){L.innerHTML=`<p class="quiet mono" style="font-size:12px;padding:8px 0">No open positions. Run a cycle.</p>`;return;}
+  L.innerHTML=S.positions.map((p,i)=>
+    `<div class="ledger-row"><span>${p.sym} carry \u00b7 ${fmt$(p.size)}</span><span class="pnl ${p.pnl>=0?"pos":"neg"}">${p.pnl>=0?"+":""}$${p.pnl.toFixed(2)}</span><button class="ghostbtn" style="min-height:34px;padding:5px 12px;font-size:11px" onclick="closePos(${i})">CLOSE</button></div>`).join("");
+}
+window.closePos=i=>{const p=S.positions[i];S.equity+=p.pnl;S.positions.splice(i,1);renderLedger();pushEq();};
+function accrue(){
+  S.positions.forEach(p=>{const a=S.assets.find(x=>x.sym===p.sym);p.pnl+=p.size*((a?a.f:p.f));});
+  if(S.positions.length) renderLedger();
+  pushEq();
+}
+function pushEq(){
+  const mtm=S.equity+S.positions.reduce((s,p)=>s+p.pnl,0);
+  S.eq.push(mtm); if(S.eq.length>60)S.eq.shift();
+  const min=Math.min(...S.eq),max=Math.max(...S.eq),span=(max-min)||1;
+  $("eq-poly").setAttribute("points",S.eq.map((v,i)=>`${(i/(S.eq.length-1||1))*300},${52-((v-min)/span)*46}`).join(" "));
+}
+
+/* ============ auto mode ============ */
+$("btn-auto").addEventListener("click",()=>{
+  S.auto=!S.auto;
+  const b=$("btn-auto"); b.classList.toggle("on",S.auto); b.setAttribute("aria-pressed",S.auto);
+  if(S.auto){ if(!S.running) runCycle(); S.autoTimer=setInterval(()=>{ if(!S.running&&S.positions.length<4) runCycle(); },9000); }
+  else clearInterval(S.autoTimer);
+});
+
+/* ============ modules ============ */
+const MODS=[
+ ["Funding persistence predictor","Regime-aware model of whether current funding will persist long enough to pay for the trade.","quant/funding_persistence.py"],
+ ["Gap distributions","Asset-specific empirical distributions of basis/funding gaps \u2014 no one-size-fits-all assumptions.","quant/gap_distributions.py"],
+ ["Impact + capacity model","L2 order-book impact estimation and dynamic capacity: how much size the book can actually absorb.","quant/impact_capacity.py"],
+ ["ADL rank estimator","Heuristic for auto-deleveraging queue position, so profitable positions don't get force-closed first.","quant/adl_estimator.py"],
+ ["Formal risk gates","Pure functions every trade must pass. No side effects, no overrides, fully testable.","quant/risk_gates.py"],
+ ["Event-driven simulator","High-fidelity paper twin of the live loop for backtests and rehearsal.","simulation/engine.py"],
+ ["Adversarial self-play","Injects hostile episodes \u2014 funding flips, liquidity vacuums \u2014 and scores survival.","cli adversarial"],
+ ["LangGraph agent layer","Multi-agent cognition, gated behind anomaly scores and meta-review schedules.","agents/graph.py"],
+ ["Atomic dual-leg executor","Both legs fill together or the trade rolls back \u2014 no naked leg risk. Mock + live interface.","execution/hyperliquid_client.py"],
+ ["Agent wallet + audit log","Non-custodial session-key wallet with zero withdrawal rights; every action logged.","security/agent_wallet.py"],
+ ["Unified CLI","scan / simulate / adversarial / verify \u2014 every feature reachable from one entry point.","python -m agenticarb.cli"],
+ ["Docker one-command verify","Full E2E verification with zero local Python dependencies.","docker compose run"]
+];
+$("mods").innerHTML=MODS.map((m,i)=>
+ `<div class="mod" id="mod-${i}"><button class="mod-btn" aria-expanded="false" onclick="tgMod(${i})"><span class="st">WORKING</span><span class="nm">${m[0]}</span><span class="chev">\u25B6</span></button><div class="mod-body"><p>${m[1]}</p><code>${m[2]}</code></div></div>`).join("");
+window.tgMod=i=>{const m=$("mod-"+i);const open=m.classList.toggle("open");m.querySelector(".mod-btn").setAttribute("aria-expanded",open);};
+
+/* ============ console ============ */
+const SCRIPTS={
+ "verify":[["w","$ python -m agenticarb.cli verify"],["","checking package import .............. "],["g","OK"],
+  ["","checking configs/default.yaml ........ "],["g","OK"],["","quant: persistence \u00b7 gaps \u00b7 impact ... "],["g","OK"],
+  ["","risk gates (pure-function audit) ..... "],["g","OK"],["","simulator smoke run (24h) ............ "],["g","OK"],
+  ["","adversarial survival suite ........... "],["g","OK"],["","dual-leg mock execution .............. "],["g","OK"],
+  ["","agent wallet guard + audit log ....... "],["g","OK"],["","LangGraph cycle (anomaly-gated) ...... "],["g","OK"],
+  ["g","\nALL CHECKS PASSED"],["","A senior engineer can now deploy, use every feature, and verify E2E."]],
+ "scan":[["w","$ python -m agenticarb.cli scan"],["","scanning perp universe for funding-rate carry\u2026"],
+  ["","  HYPE-PERP   gross 41.8% APR   persistence 0.84   capacity $5.2M"],
+  ["","  SOL-PERP    gross 18.4% APR   persistence 0.77   capacity $8.4M"],
+  ["","  BTC-PERP    gross 10.9% APR   persistence 0.91   capacity $38M"],
+  ["","running risk gates on top candidates\u2026"],["g","  \u2192 2 opportunities risk-APPROVED, 1 rejected (G3 capacity)"]],
+ "simulate --hours 168 --adversarial":[["w","$ python -m agenticarb.cli simulate --hours 168 --adversarial --verbose"],
+  ["","event-driven engine \u00b7 168h horizon \u00b7 adversarial episodes ON"],
+  ["y","  t+031h  injected: funding flip on candidate  \u2192 position unwound by G2"],
+  ["y","  t+092h  injected: liquidity vacuum          \u2192 sizing throttled by capacity model"],
+  ["","  t+168h  simulation complete"],
+  ["g","  survival: PASS   \u00b7   max drawdown within limits   \u00b7   audit log written"]],
+ "adversarial --repeats 2":[["w","$ python -m agenticarb.cli adversarial --repeats 2"],
+  ["","red-team suite \u00b7 self-play round 1/2\u2026"],["","red-team suite \u00b7 self-play round 2/2\u2026"],
+  ["","episodes: funding shocks, gap-throughs, ADL cascades, latency spikes"],
+  ["g","  all survival criteria met \u2014 system hardened, reports saved"]]
+};
+const chipBox=$("chips");
+Object.keys(SCRIPTS).forEach((k,i)=>{
+  const c=document.createElement("button");c.className="chip"+(i===0?" on":"");c.textContent=k;
+  c.addEventListener("click",()=>{document.querySelectorAll(".chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");playScript(k);});
+  chipBox.appendChild(c);
+});
+let playing=false;
+async function playScript(k){
+  if(playing) return; playing=true;
+  const T=$("term"); T.innerHTML="";
+  for(const [cls,txt] of SCRIPTS[k]){
+    const sp=document.createElement("span"); if(cls)sp.className=cls;
+    T.appendChild(sp);
+    if(RM){sp.textContent=txt+"\n";}
+    else{for(const ch of txt){sp.textContent+=ch;await new Promise(r=>setTimeout(r,6));}sp.textContent+="\n";}
+    T.scrollTop=T.scrollHeight;
+  }
+  const cur=document.createElement("span");cur.className="cursor";T.appendChild(cur);
+  playing=false;
+}
+
+/* ============ copy buttons ============ */
+document.querySelectorAll(".copybtn").forEach(b=>b.addEventListener("click",async()=>{
+  try{await navigator.clipboard.writeText(b.dataset.copy);}catch(e){}
+  const o=b.textContent;b.textContent="COPIED \u2713";setTimeout(()=>b.textContent=o,1600);
+}));
+
+/* ============ boot ============ */
+renderTape(); renderScan(); pushEq();
+tryLive();
+setInterval(simTick,5000);
+setInterval(accrue,3000);
+setInterval(tryLive,120000);
+</script>
+</body>
+</html>
