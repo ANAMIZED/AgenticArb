@@ -13,6 +13,22 @@ AgenticArb is a production-aspirational, risk-first system designed to sit in th
 
 ---
 
+## Interactive Desk (Live Demo)
+
+**[Open the Interactive Desk →](https://anamized.github.io/agenticarb/)** *(or open [`demo/index.html`](demo/index.html) locally)*
+
+A self-contained, mobile-first demo that lets you:
+
+- Watch a live/sim Hyperliquid funding tape
+- Run a full decision cycle (Scan → Quant → Risk Gates → Atomic Dual-Leg)
+- Explore every architecture module
+- Preview CLI commands with a typewriter console
+- Copy the 5-minute deploy instructions
+
+No backend required. Pure HTML/CSS/JS. Nothing places real orders.
+
+---
+
 ## Table of Contents
 
 1. [Quick Start (5 minutes)](#1-quick-start-5-minutes)
@@ -82,6 +98,7 @@ docker compose run --rm agenticarb
 | CLI for scan / simulate / adversarial / verify | Working | `python -m agenticarb.cli` |
 | Docker Compose one-command verification | Working | `docker compose run` |
 | Unit + E2E tests | Working | `pytest` / `make test` |
+| Interactive Desk demo | Working | [`demo/index.html`](demo/index.html) |
 
 The critical path is fully deterministic. LLM calls are gated behind anomaly scores and meta-review schedules (hybrid architecture).
 
@@ -181,6 +198,7 @@ agenticarb/
 ├── LICENSE (MIT)
 ├── pyproject.toml / requirements.txt / Dockerfile / docker-compose.yml / Makefile
 ├── configs/default.yaml
+├── demo/index.html          # Interactive Desk (display highlight)
 ├── src/agenticarb/
 │   ├── cli.py
 │   ├── quant/          # persistence, gaps, impact/capacity, ADL, risk gates
