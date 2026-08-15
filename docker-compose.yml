@@ -1,0 +1,22 @@
+version: "3.9"
+
+services:
+  agenticarb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: agenticarb:v2-elite
+    container_name: agenticarb
+    environment:
+      - PYTHONUNBUFFERED=1
+      - AGENTICARB_MODE=paper
+      - AGENTICARB_EQUITY=100000
+    volumes:
+      - ./configs:/app/configs:ro
+      - ./data:/app/data
+      - agenticarb-logs:/app/logs
+    command: ["python", "-m", "agenticarb.cli", "verify"]
+    restart: "no"
+
+volumes:
+  agenticarb-logs:

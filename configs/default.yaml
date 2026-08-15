@@ -1,0 +1,48 @@
+# AgenticArb v2 Elite – Default Configuration
+
+system:
+  mode: paper                 # paper | live | sim
+  equity: 100000.0
+  log_level: INFO
+
+risk:
+  max_leverage: 5.0
+  max_portfolio_concentration: 0.25
+  max_oi_share: 0.08
+  min_edge_after_impact_bps: 5.0
+  max_gap_loss_fraction: 0.35
+  max_correlation: 0.7
+
+quant:
+  funding_half_life_hours: 6.0
+  high_funding_threshold: 0.00015
+  capacity_impact_fraction: 0.5
+  hard_cap_notional: 2000000.0
+
+execution:
+  target_latency_ms: 100
+  dual_leg_timeout_ms: 250
+  fee_bps: 2.0
+  use_agent_wallet: true
+
+simulation:
+  funding_interval_hours: 1.0
+  default_seed: 42
+
+security:
+  session_hours_valid: 24
+  max_notional_per_order: 50000
+  max_notional_per_day: 250000
+  allowed_assets:
+    - BTC
+    - ETH
+    - TSLA
+    - NVDA
+    - GOLD
+    - CL
+    - EUR
+
+agents:
+  enable_langgraph: true
+  anomaly_llm_threshold: 0.8   # only call LLM above this
+  meta_review_hours: 168
