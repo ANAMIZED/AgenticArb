@@ -1,29 +1,26 @@
 # AgenticArb v2 Elite
 
-**Open-Source Autonomous Agentic Operating System for RWA Perpetual Funding-Rate Carry Strategies**
+**Open-Source Autonomous Agentic Operating System for RWA Perpetual Funding-Rate Carry Strategies on Hyperliquid**
 
-AgenticArb is a production-aspirational, risk-first system designed to sit in the extreme top tier of autonomous trading systems for Hyperliquid-style RWA and crypto perpetuals. It closes the classic gaps of naive funding harvesters: calibrated quant models, capacity/crowding awareness, atomic dual-leg execution, continuous adversarial self-play, hybrid deterministic efficiency, and formal risk gates.
+AgenticArb is a production-aspirational, risk-first system designed for the extreme top tier of autonomous trading systems for Hyperliquid-style RWA and crypto perpetuals. It closes classic gaps of naive funding harvesters: calibrated quant models, capacity/crowding awareness, atomic dual-leg execution, continuous adversarial self-play, hybrid deterministic efficiency, and formal risk gates.
 
-> **Design goal of this repository**  
-> If you hand this monorepo (source + this README only) to a senior engineer who has never seen the project, they must be able to:
-> 1. Deploy it,
-> 2. Exercise every major feature,
-> 3. Verify the system works end-to-end  
-> with zero additional context.
+> **Design goal**  
+> Hand this monorepo (source + this README) to a senior engineer who has never seen the project — they must be able to deploy, exercise every major feature, and verify end-to-end with zero additional context.
+
+*Related:* [OpenGOS](https://github.com/ANAMIZED/OpenGOS) (grants MCP) · [LRSI](https://github.com/ANAMIZED/LRSI) / [server-os](https://github.com/ANAMIZED/server-os) (agentic OS kernels) · [x402-cloudflare-starter](https://github.com/ANAMIZED/x402-cloudflare-starter)
 
 ---
 
-## Interactive Desk (Live Demo)
+## 🚀 Interactive Desk (Hero Demo)
 
 **[Open the Interactive Desk →](https://anamized.github.io/agenticarb/)** *(or open [`demo/index.html`](demo/index.html) locally)*
 
-A self-contained, mobile-first demo that lets you:
+Self-contained, mobile-first demo:
 
-- Watch a live/sim Hyperliquid funding tape
-- Run a full decision cycle (Scan → Quant → Risk Gates → Atomic Dual-Leg)
-- Explore every architecture module
-- Preview CLI commands with a typewriter console
-- Copy the 5-minute deploy instructions
+- Live/sim Hyperliquid funding tape
+- Full decision cycle (Scan → Quant → Risk Gates → Atomic Dual-Leg)
+- Architecture explorer + typewriter CLI preview
+- 5-minute deploy instructions
 
 No backend required. Pure HTML/CSS/JS. Nothing places real orders.
 
