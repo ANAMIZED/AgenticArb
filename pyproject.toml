@@ -9,16 +9,13 @@ description = "Open-Source Autonomous Agentic Operating System for RWA Perpetual
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
-authors = [
-    { name = "AgenticArb Contributors" }
-]
+authors = [{ name = "AgenticArb Contributors" }]
 keywords = ["hyperliquid", "funding-rate", "rwa", "perpetuals", "agentic", "quant", "carry"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Financial and Insurance Industry",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Topic :: Office/Business :: Financial :: Investment",
 ]
 dependencies = [
     "numpy>=1.24",
@@ -33,9 +30,13 @@ dependencies = [
 [project.optional-dependencies]
 live = ["hyperliquid-python-sdk>=0.1.0"]
 dev = ["pytest>=7.4", "pytest-cov>=4.1", "ruff>=0.4"]
+api = ["fastapi", "uvicorn", "httpx"]
+mcp = ["mcp"]
 
 [project.scripts]
 agenticarb = "agenticarb.cli:main"
+agenticarb-api = "agenticarb.api.main:run"
+agenticarb-mcp = "agenticarb.mcp.server:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -43,7 +44,3 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-
-[tool.ruff]
-line-length = 100
-target-version = "py310"
