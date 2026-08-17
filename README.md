@@ -11,6 +11,14 @@ AgenticArb is a production-aspirational, risk-first system designed for the extr
 
 **[Support Public Goods](https://donate.stripe.com/00w5kE3wOg5L8Jn2F243S00)** · **[Support Agentic OS Kernels ($99)](https://buy.stripe.com/bJecN63wObPv6Bf7Zm43S02)**
 
+### Non-custodial USDC (preferred for agents)
+
+| Network | Address | Explorer |
+|---------|---------|----------|
+| **Base** | `0xD3d0E9eDAe3Ac7bb199a8EAA761BdA423b878438` | [basescan](https://basescan.org/address/0xD3d0E9eDAe3Ac7bb199a8EAA761BdA423b878438) |
+| **Ethereum** | `0xD3d0E9eDAe3Ac7bb199a8EAA761BdA423b878438` | [etherscan](https://etherscan.io/address/0xD3d0E9eDAe3Ac7bb199a8EAA761BdA423b878438) |
+| **Solana** | `ETQwWf19axArsY493UfC6bxe2BmEzmzvCb58PPnC38A` | [solscan](https://solscan.io/account/ETQwWf19axArsY493UfC6bxe2BmEzmzvCb58PPnC38A) |
+
 ---
 
 ## 🚀 Interactive Desk (Hero Demo)
